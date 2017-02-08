@@ -1,0 +1,170 @@
+//Intro to Mongo
+db.class.insert
+{
+	classcode: "CS433",
+	department: "CS",
+	instructor: {name: "Mike", office: "Starbucks"}
+	students: ["Dave", "Joe", "Stan"]
+}
+db.class.find({students: "Dave"})
+
+
+>
+>
+>
+
+
+
+
+//First Collection
+db.alex.insert({classcode: "CS433"})
+db.alex.insert({department: "CS"})
+db.alex.insert({instructor: {name: "Mike", office: "Starbucks"}})
+db.alex.insert({students: {name: "Dave", major: "CS", graduation: "2017"}, {name: "Joe", major: "BI", graduation: "2018"}, {name: "Alex", major: "GFX", graduation: "2020"}})
+db.alex.find({students: {$elemMatch: {name: "Dave"}}})
+
+
+//task for wednesday
+/*each student is an obj with name, major and grad year
+modify query to get dave
+all classes that have at least one student whose major is not the department of the class.*/
+//Mongo in class assignment 2/6
+db.class.insert({classcode: "CS433"})
+db.class.insert({department: "CS"})
+db.class.insert({instructor: {name: "Mike", office: "Starbucks"}})
+db.class.insert({students: [{name: "Alex", major: "CS", classcode: "CS433", graduation: "2017"}, {name: "Joe", major: "BI", classcode: "CS433", graduation: "2018"}, {name: "Dave", major: "FR", classcode: "CS433", graduation: "2019"}]})
+db.class.insert({classcode: ["CS433", "CS248", "BI101"]})
+db.class.insert({major: ["CS", "AR", "FR", "BI", "CH"]})
+
+db.class.find({major: {$ne:"CS"}})
+db.class.find({$and:[{classcode: "CS433"},{major: {$ne:"CS"}} ]})
+
+out:
+> db.class.find({$and:[{classcode: "CS433"},{major: {$ne:"CS"}} ]})
+{ "_id" : ObjectId("589a815128ad41215ba3aaaf"), "classcode" : "CS433" }
+{ "_id" : ObjectId("589a83de28ad41215ba3aab3"), "classcode" : [ "CS433", "CS248", "BI101" ] }
+
+
+>
+>
+>
+
+
+
+//2/8 Aggregation, Mongo cont.
+db.class.find({students: {$elemMatch: {name: "CS"}}}) //reference the dept of the class
+//Aggregation: multi stage pipeline that transforms the docs into aggregated(clustered) results
+db.class.find({students: {$elemMatch: {name: "CS"}}}, {1/0}) //(1/0) = projection
+				    
+				    //aggre op //field name(0,1,expr)
+db.class.aggregate([{$project: {classCode: 0}}])
+
+//Aggregation example
+db.class.insert
+({
+  "_id" : 1,
+  title: "abc123",
+  isbn: "0001122223334",
+  author: { last: "zzz", first: "aaa" },
+  copies: 5
+})
+
+in: db.books.aggregate( [ { $project : { title : 1 , author : 1 } } ] )
+out: { "_id" : 1, "title" : "abc123", "author" : { "last" : "zzz", "first" : "aaa" } }
+
+//The following $project stage adds the new fields isbn, lastName, and copiesSold:
+in: 
+db.books.aggregate
+(
+   [
+      {
+         $project: 
+         {
+            title: 1,
+            isbn: 
+            {
+               prefix: { $substr: [ "$isbn", 0, 3 ] },
+               group: { $substr: [ "$isbn", 3, 2 ] },
+               publisher: { $substr: [ "$isbn", 5, 4 ] },
+               title: { $substr: [ "$isbn", 9, 3 ] },
+               checkDigit: { $substr: [ "$isbn", 12, 1] }
+            },
+            lastName: "$author.last",
+            copiesSold: "$copies"
+         }
+      }
+   ]
+)
+out:
+{
+   "_id" : 1,
+   "title" : "abc123",
+   "isbn" : 
+   {
+      "prefix" : "000", //pos 0, 3 dig
+      "group" : "11", //pos 3, 2 dig
+      "publisher" : "2222", //pos 5, 4 dig
+      "title" : "333", //pos 9, 3 dig
+      "checkDigit" : "4" //pos 12, dig 1
+   },
+   "lastName" : "zzz",
+   "copiesSold" : 5
+}
+
+//match example
+db.class.insert
+(
+{ "_id" : ObjectId("512bc95fe835e68f199c8686"), "author" : "dave", "score" : 80, "views" : 100 }
+{ "_id" : ObjectId("512bc962e835e68f199c8687"), "author" : "dave", "score" : 85, "views" : 521 }
+{ "_id" : ObjectId("55f5a192d4bede9ac365b257"), "author" : "ahn", "score" : 60, "views" : 1000 }
+{ "_id" : ObjectId("55f5a192d4bede9ac365b258"), "author" : "li", "score" : 55, "views" : 5000 }
+{ "_id" : ObjectId("55f5a1d3d4bede9ac365b259"), "author" : "annT", "score" : 60, "views" : 50 }
+{ "_id" : ObjectId("55f5a1d3d4bede9ac365b25a"), "author" : "li", "score" : 94, "views" : 999 }
+{ "_id" : ObjectId("55f5a1d3d4bede9ac365b25b"), "author" : "ty", "score" : 95, "views" : 1000 }
+)
+
+in: 
+db.articles.aggregate([ { $match : { author : "dave" } } ]);
+out: 
+{ "_id" : ObjectId("512bc95fe835e68f199c8686"), "author" : "dave", "score" : 80, "views" : 100 }
+{ "_id" : ObjectId("512bc962e835e68f199c8687"), "author" : "dave", "score" : 85, "views" : 521 }
+
+
+//$limit - specify what you do want
+//$skip - specify what you dont want
+//$sort - provide col name, -1 for desending, 1 for ascending
+
+
+...inclass shit
+students -->
+	first:
+	last:
+	classes: [{classcode: "CS123", grade: "96"]
+	major: "CS"
+
+6 students
+2 classes each
+db.classfuckaround.insert({first: "Alex", last: "Steel", major: "CS", classes: [{classCode: "CS433", grade: "90"}, {classcode: "CS142", grade: "100"}]})
+db.classfuckaround.insert({first: "John", last: "Doe", major: "BIO", classes: [{classCode: "CS001", grade: "90"}, {classcode: "CS111", grade: "100"}]})
+db.classfuckaround.insert({first: "Jane", last: "Dove", major: "FR", classes: [{classCode: "CS999", grade: "90"}, {classcode: "CS998", grade: "100"}]})
+db.classfuckaround.insert({first: "Jim", last: "Bow", major: "ENG", classes: [{classCode: "CS201", grade: "90"}, {classcode: "CS420", grade: "100"}]})
+db.classfuckaround.insert({first: "Sam", last: "Son", major: "PRO", classes: [{classCode: "CS429", grade: "90"}, {classcode: "CS942", grade: "100"}]})
+db.classfuckaround.insert({first: "Rick", last: "Sanchez", major: "CS", classes: [{classCode: "CS420", grade: "90"}, {classcode: "CS666", grade: "100"}]})
+
+db.classfuckaround.insert({students: [{first: "Alex", last: "Steel", major: "CS", classes: [{classCode: "CS433", grade: "90"}, {classcode: "CS142", grade: "100"}] },{first: "John", last: "Doe", major: "BIO", classes: [{classCode: "CS001", grade: "90"}, {classcode: "CS111", grade: "100"}]},{first: "Jane", last: "Dove", major: "FR", classes: [{classCode: "CS999", grade: "90"}, {classcode: "CS998", grade: "100"}]},{first: "Jim", last: "Bow", major: "ENG", classes: [{classCode: "CS201", grade: "90"}, {classcode: "CS420", grade: "100"}]},{first: "Sam", last: "Son", major: "PRO", classes: [{classCode: "CS429", grade: "90"}, {classcode: "CS942", grade: "100"}]},{first: "Rick", last: "Sanchez", major: "CS", classes: [{classCode: "CS420", grade: "90"}, {classcode: "CS666", grade: "100"}]}]})
+
+...todo
+- 1 phase, match by major
+- 2 phase, match by major, project only first/last
+- 3 phase, match students in a particular class, order by last, first, limit to 2 students
+done...
+--> db.classfuckaround.aggregate([ { $match : { major : "CS" } } ])
+--> db.classfuckaround.aggregate([ { $match : { major : "CS" }, {$project: {first: 1, last: 1}} } ])
+--> db.classfuckaround.aggregate([ { $match:("class.classcode":"CS999")}, {$sort:{lastname:-1}}, {$limit:1}])
+
+//$unwind - Deconstructs an array field from the input documents to output a document for each element.
+
+
+//next class...
+
+db.classfuckaround.aggregate([{$unwind: {path: "$classes"}}, {$match: {"classes.classcode":"CS999"}}, {$sort:{"classes.grade":-1}}])

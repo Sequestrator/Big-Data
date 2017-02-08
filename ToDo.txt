@@ -1,0 +1,10 @@
+2/6 Databases
+
+2/6: Mongo Queries
+2/8: Mongo Aggregation
+2/13: Design a mongo db system
+2/15: Test1
+
+//to run
+sudo ./mongod
+new terminal --> sudo ./mongo

@@ -1,0 +1,38 @@
+//Intro to Mongo
+db.class.insert
+{
+	classcode: "CS433",
+	department: "CS",
+	instructor: {name: "Mike", office: "Starbucks"}
+	students: ["Dave", "Joe", "Stan"]
+}
+db.class.find({students: "Dave"})
+
+//First Collection
+db.alex.insert({classcode: "CS433"})
+db.alex.insert({department: "CS"})
+db.alex.insert({instructor: {name: "Mike", office: "Starbucks"}})
+db.alex.insert({students: {name: "Dave", major: "CS", graduation: "2017"}, {name: "Joe", major: "BI", graduation: "2018"}, {name: "Alex", major: "GFX", graduation: "2020"}})
+db.alex.find({students: {$elemMatch: {name: "Dave"}}})
+
+
+//task for wednesday
+each student is an obj with name, major and grad year
+modify query to get dave
+all classes that have at least one student whose major is not the department of the class.
+
+//Mongo in class assignment
+db.class.insert({classcode: "CS433"})
+db.class.insert({department: "CS"})
+db.class.insert({instructor: {name: "Mike", office: "Starbucks"}})
+db.class.insert({students: [{name: "Alex", major: "CS", classcode: "CS433", graduation: "2017"}, {name: "Joe", major: "BI", classcode: "CS433", graduation: "2018"}, {name: "Dave", major: "FR", classcode: "CS433", graduation: "2019"}]})
+db.class.insert({classcode: ["CS433", "CS248", "BI101"]})
+db.class.insert({major: ["CS", "AR", "FR", "BI", "CH"]})
+
+db.class.find({major: {$ne:"CS"}})
+db.class.find({$and:[{classcode: "CS433"},{major: {$ne:"CS"}} ]})
+
+out:
+> db.class.find({$and:[{classcode: "CS433"},{major: {$ne:"CS"}} ]})
+{ "_id" : ObjectId("589a815128ad41215ba3aaaf"), "classcode" : "CS433" }
+{ "_id" : ObjectId("589a83de28ad41215ba3aab3"), "classcode" : [ "CS433", "CS248", "BI101" ] }
