@@ -1,0 +1,76 @@
+[T]Volunteers:
+- id
+- name
+- age
+- interest(<type)
+
+[T]Volunteer History:
+- volunteer rating
+- volunteer id
+- Opportunity id
+
+[T]Volunteer Opportunities:
+- id
+- company id
+- date
+- type (>interest)
+- number needed
+
+[T]Volunteer Interest:
+- volunteer id
+- volunteer type
+
+[T]Company
+- id
+- name
+
+Questions:
+1. What volunteer opportunites are available on a date that match an interest
+2. What volunteers available on a date with/without an interest
+3. who is the top n rated volunteers, potentially by interest
+
+Relationships:
+Vol -> Vol Int
+Vol --> Vol Hist
+Vol Ops --> Vol Hist
+
+What do we need?
+{C}Volunteers (Attacking Number 2)
+- interests (Vol Hist with some opor info)
+	- opor id
+	- opor type
+
+{C}Volunteers
+- id: 10
+- name: Mike
+- age: 51
+- interests: [sports, culture]
+	- db.volunteers.find({interests: {$elemMatch: "sports"}})
+- history: [Oporid, date, type, rating, companyName, numberNeeded: 6]
+	- db.volunteers.find({history: {$ne:{$elemMatch: {date: "1/2/34"}}}}})
+- interests and history
+	- {$and:[
+	db.volunteers.find({interests: {$elemMatch: "sports"}})
+	db.volunteers.find({history: {$ne:{$elemMatch: {date: "1/2/34"}}}}}) ]}
+	
+{C}Grouping
+- id: 6
+- name: Mike
+- Rating: 106
+
+$sort
+$limit
+$group
+
+db.volunteers.find({$group: {_id: "$_id"}, avgRating: {$avg: "$history.rating"},})
+
+{C}Opportunities
+{$unwind: "history" {$project: [{opportunity: "$opportunity", numberNeeded: "$numberNeeded"}]{$group: {_id: "$oporid", count: {$count:1}, numberNeeded{$max: "$numberNeeded"}}}}}
+
+{C}VolunteerOps
+- id:
+- date:
+- type:
+- numberNeeded:
+- company: {id, name}
+- volunteers: [{id:, name:}]
