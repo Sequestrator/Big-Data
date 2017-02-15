@@ -1,4 +1,4 @@
-![Bombarding](https://wallpaperscraft.com/image/counter_strike_global_offensive_art_anarchist_game_card_steam_cs_go_97006_2560x1024.jpg)
+![Bombarding](http://businessoverbroadway.com/wp-content/uploads/2014/09/big-data.jpg)
 
 Clone or download repository: https://github.com/Bombarding/Big-Data.git
 
