@@ -1,0 +1,42 @@
+//Project 
+
+RELATIONAL SCHEMA TO BASE OUR NO-SQL SOLUTION ON
+Table: Airline
+code – char(3) name – varchar(40)
+
+Table: Airport
+code – char(3) city – varchar(40) state – char(20)
+
+Table: Plane
+code – char(8) seats – integer
+
+Table: Flight
+number – char(8)
+airline – char(3) origin-airport – char(3) destination-airport – char(3) plane – char(3)
+distance - integer departure-time – time arrival-time – time sunday – boolean monday – boolean tuesday – boolean wednesday – boolean thursday – boolean friday – boolean saturday – Boolean
+
+Table: Traveller
+id – integer name
+
+Table: Reservation
+id – integer
+flight – char(8) traveler – integer seat – integer
+
+     
+QUERIES WE WILL NEED TO EXECUTE
+1. What flights have availability between any two given cities in a certain date range.
+2. What flights are overbooked either by a destination city or an arrival city in a certain
+date range.
+3. What city has the highest demand (demand is the percentage of possible seats
+originating in a city that are sold) in a given date range or on a given day of week
+4. Conversely what city has the lowest demand.
+5. What destination city has the most available inbound seats in a given date range.
+6. List by airline and day of week, how many total miles are flown by that airline
+7. What is the average number of flights and miles flown by all travelers, by the top n
+travelers, by the top n% travelers. For the later two, what is the percentage of total flights and total miles that these travelers represent.
+
+
+//when you design relationally, you care about structure, not about what queries will be.
+//complexity of queries --> nosql
+
+Start with queries, build documents that you need, then go to schema for info.

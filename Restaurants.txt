@@ -1,0 +1,15 @@
+./mongo thomas.butler.edu:27017/cs473
+
+Restaurants - zips
+Zips - id, city, state
+
+db.restaurants.aggregate([{$lookup: {from: "zips", localField: "location.zipcode", foreignField: "_id", as: "xyz"}}])
+
+task:
+above, then project name, city, state, zipcode
+
+db.restaurants.aggregate([{$lookup: {from: "zips", localField: "location.zipcode", foreignField: "_id", as: "xyz"}}])
+
+{ "$project": { "name": "$name", "city": "$city", "state": "$state", "zipcode": "$zipcode"}}
+
+db.restaurants.aggregate([{$lookup: {from: "zips", localField: "location.zipcode", foreignField: "_id", as: "xyz"}}, {"$project": {"name": "$name", "city": "$city", "state": "$state", "zipcode": "$zipcode"}}])

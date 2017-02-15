@@ -144,14 +144,15 @@ students -->
 
 6 students
 2 classes each
-db.classfuckaround.insert({first: "Alex", last: "Steel", major: "CS", classes: [{classCode: "CS433", grade: "90"}, {classcode: "CS142", grade: "100"}]})
-db.classfuckaround.insert({first: "John", last: "Doe", major: "BIO", classes: [{classCode: "CS001", grade: "90"}, {classcode: "CS111", grade: "100"}]})
-db.classfuckaround.insert({first: "Jane", last: "Dove", major: "FR", classes: [{classCode: "CS999", grade: "90"}, {classcode: "CS998", grade: "100"}]})
-db.classfuckaround.insert({first: "Jim", last: "Bow", major: "ENG", classes: [{classCode: "CS201", grade: "90"}, {classcode: "CS420", grade: "100"}]})
-db.classfuckaround.insert({first: "Sam", last: "Son", major: "PRO", classes: [{classCode: "CS429", grade: "90"}, {classcode: "CS942", grade: "100"}]})
-db.classfuckaround.insert({first: "Rick", last: "Sanchez", major: "CS", classes: [{classCode: "CS420", grade: "90"}, {classcode: "CS666", grade: "100"}]})
-
+db.classfuckaround.insert({first: "Alex", last: "Steel", major: "CS", "classes": [{classCode: "CS433", grade: "90"}, {classcode: "CS142", grade: "100"}]})
+db.classfuckaround.insert({first: "John", last: "Doe", major: "BIO", "classes": [{classCode: "CS001", grade: "90"}, {classcode: "CS111", grade: "100"}]})
+db.classfuckaround.insert({first: "Jane", last: "Dove", major: "FR", "classes": [{classCode: "CS999", grade: "90"}, {classcode: "CS998", grade: "100"}]})
+db.classfuckaround.insert({first: "Jim", last: "Bow", major: "ENG", "classes": [{classCode: "CS201", grade: "90"}, {classcode: "CS420", grade: "100"}]})
+db.classfuckaround.insert({first: "Sam", last: "Son", major: "PRO", "classes": [{classCode: "CS429", grade: "90"}, {classcode: "CS942", grade: "100"}]})
+db.classfuckaround.insert({first: "Rick", last: "Sanchez", major: "CS", "classes": [{classCode: "CS420", grade: "90"}, {classcode: "CS666", grade: "100"}]})
 db.classfuckaround.insert({students: [{first: "Alex", last: "Steel", major: "CS", classes: [{classCode: "CS433", grade: "90"}, {classcode: "CS142", grade: "100"}] },{first: "John", last: "Doe", major: "BIO", classes: [{classCode: "CS001", grade: "90"}, {classcode: "CS111", grade: "100"}]},{first: "Jane", last: "Dove", major: "FR", classes: [{classCode: "CS999", grade: "90"}, {classcode: "CS998", grade: "100"}]},{first: "Jim", last: "Bow", major: "ENG", classes: [{classCode: "CS201", grade: "90"}, {classcode: "CS420", grade: "100"}]},{first: "Sam", last: "Son", major: "PRO", classes: [{classCode: "CS429", grade: "90"}, {classcode: "CS942", grade: "100"}]},{first: "Rick", last: "Sanchez", major: "CS", classes: [{classCode: "CS420", grade: "90"}, {classcode: "CS666", grade: "100"}]}]})
+
+
 
 ...todo
 - 1 phase, match by major
@@ -166,5 +167,9 @@ done...
 
 
 //next class...
-
 db.classfuckaround.aggregate([{$unwind: {path: "$classes"}}, {$match: {"classes.classcode":"CS999"}}, {$sort:{"classes.grade":-1}}])
+
+
+
+//Testing shit
+db.class2.insert({first: "Alex", last: "Steel", major: "CS", "classes": [{classCode: "CS433", grade: "90"}, {classcode: "CS142", grade: "100"}]})
