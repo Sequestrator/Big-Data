@@ -1,0 +1,35 @@
+Thursday 2/16, 10:11pm - I updated some of the column names in the relationship to properly identify the hierarchy of mfg/make/model.
+
+
+
+You are going to design a noSQL database for an website that sells used cars. The design of the database using a relational design model is:
+
+
+
+Manufacturer(id, name)                                                           General Motors for example
+
+Make(id, name, manufacturer_id)                                           Chevrolet, Buick, etc
+
+Model(id, name, make_id)                                                       Corsica, Corvette, etc
+
+Vehicle(vin, model_id, year, miles, color, price, dealer_id)       VIN is the id for the vehicle, dealer is who is selling it
+
+Dealer(id, name, city, state, phone)
+
+
+
+Any given dealer may have multiple cars available. The website needs to perform the following queries.
+
+- Find all cars of a given model in a specific city. Further limit the search by vehicle color, year and miles.
+
+- Find all cars available at a particular dealership
+
+
+
+You are to write up your design for the noSQL version of this database. I am looking for the following:
+
+- A justification for the design. Don't just give me a structure, tell me why you are using that structure. You should include how your design reflects at least two of the strategies, if not more, from the initial paper that we reviewed at the start of class. You can also reference the concepts we have talked about in class the last several periods.
+
+- I do want you to explain how your design facilitates the queries that the system must run. You don't have to actually write the mongo queries, although you can if you want. You do have to give me a general approach for writing the queries though.
+
+- I expect that this should be roughly 2 pages in length. I need to see a DETAILED explanation of your design ideas.
