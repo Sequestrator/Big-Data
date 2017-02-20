@@ -8,3 +8,6 @@
 //to run
 sudo ./mongod
 new terminal --> sudo ./mongo
+
+2/20
+spend 30 min researching sharding
