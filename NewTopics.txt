@@ -1,0 +1,74 @@
+Feb 20th
+
+Single field indexing:
+- pass a document that describes the index. 1 - ascend, -1 - descend
+
+add a filter condition with score, or sort by score.
+
+use dotted notation. location.state 
+
+building an index on an entire document.
+sub index can have multiple fields. if we create an index on document,
+it creates an index on the entire set of data in there already.
+
+In general, order of docs doesnt matter, but with embedded docs, field order does matter
+
+db.records.find({city: "New York", state: "NY"})
+is not the same as
+db.records.find({state: "NY", city: "New York"})
+
+Compound index:
+as many fields as you want, use 1 or -1 for fields.
+as long as the cols L-->R are included in index criteria, it can be partially used
+
+Covering index:
+Index that has all fields required by query to return. Anything that project would want
+to output.
+
+index on FN/LN, and we only project LN/FN, we can project query from the whole index.
+
+false sorts before true*
+
+Index Intersection:
+Using multiple indexes
+
+Multi-Key Index:
+Unique to mongo
+
+{name: "Mike", interests: ["Spirits", "Music"], colors: ["Blue", "Green"]}
+
+db.people.createIndex(name:1)
+db.people.find({nameL {$elemMatch: "Sports"}})
+db.people.createIndex({interests: 1})
+
+Compound Multi-Key Index:
+db.people.createIndex({name: 1, interests: 1}) //only 1 multikey field
+//could not do interests and colors at same time
+
+Text Indexes:
+search for documents who contain string "Computer" or "Steve Jobs"
+
+Geo Indexing:
+Index by latitude and longitude
+
+Hashed Indexing:
+1 or -1 = B+ search tree
+Bucket of arrays.
+hashed cannot be used with multikey or compound indexing
+
+Partial Indexing:
+creates results for using an expression set equal to true.
+
+db.people.createIndex({state: 1, name: 1}, {partialFilterExpression: {state: "IN"}})
+
+{prodID: 1, name: "bucket", size: "1 gallon"}
+{prodID: 2, name: "hammer", weight: "24 oz"}
+
+db.product.createIndex({size: 1}, {partialFilterExpression: {size: {$exists: true}}})
+db.product.createIndex({size: 1, name: 1}, {partialFilterExpression: {size: {$exists: true}}})
+
+**Case and Sens**
+specified default correlation for string types. --> English
+
+1 or 2 case insens
+0 case sens
