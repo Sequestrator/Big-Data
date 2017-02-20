@@ -1,0 +1,4 @@
+ssh asteel@thomas
+login
+
+./mongo thomas.butler.edu:27017/cs473
