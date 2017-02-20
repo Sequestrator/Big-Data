@@ -1,0 +1,95 @@
+Given:
+Manufacturer(id, name)    General Motors for example
+
+Make(id, name, manufacturer_id)      Chevrolet, Buick, etc
+
+Model(id, name, make_id)  Corsica, Corvette, etc
+
+Vehicle(vin, model_id, year, miles, color, price, dealer_id)  VIN is the id for the vehicle, dealer is who is selling it
+
+Dealer(id, name, city, state, phone)  Dealer has traits
+
+***Answers***:
+Step 1. Start with denormalizing the information given. 
+We can do this by separating into tables:
+
+[T]Manufacturer:
+- id (For each car manufac, there is an id)
+- name (Each car manufac has a name)
+
+[T]Make:
+- id (For each car make, there is an id)
+- name (Each car make has a name)
+- manufacturer_id (and every car has an id from the manufac)
+
+[T]Model:
+- id (For each car model, there is an id)
+- name (each model has a name)
+- make_id (and every car model has an id from [T]Make)
+
+[T]Vehicle:
+- vin (id for a vehicle)
+- model_id (each vehicle has an id from [T]Model)
+- year (each vehicle has a year)
+- miles (each vehicle has a certain amount of miles)
+- color (each vehicle has a certain color)
+- price (each vehicle has a certain price)
+- dealer_id (each vehicle has an id from [T]Dealer)
+
+[T]Dealer:
+- id (For every dealer there is an assigned id)
+- name (Each dealer has a name)
+- city (Dealer is available in a certain city)
+- state (That city is in a state)
+- phone (They have a phone number for contact)
+
+Questions:
+a. Find all cars of a given model in a specific city. 
+aa. Further limit the search by vehicle color, year and miles.
+b. Find all cars available at a particular dealership
+
+Step 2: Find Relationships:
+vehicle --> dealer_id (The link between what vehicle would be at a given dealership)
+
+name --> city (The link between a certain make name in a certain city)
+name --> color (The link betwen a name of a car and the color per vehicle)
+name --> miles (The link between a name of a car and the miles per vehicle)
+name --> year (The link between a name of a car and the year it was manufac)
+
+Step 3: What do we need?:
+(Attacking b) 
+{C}Cars
+- dealer_id (Cars from some dealer)
+	- make
+	- model
+
+Step 4: Building a Collection:
+{C}Cars
+- id: 1
+- manufacturer: "Lamborghini"
+- make: "Huracan:
+- model: "Spyder"
+- dealer: [id, name, city, state, phone, vehicle]
+	- db.cars.find({dealer: {$elemMatch: "vehicle"}})
+- lot: [manufacturer, make, model, year, price, dealer_id, city, state]
+	- db.cars.find({lot: {$elemMatch: {dealer_id: "1"}}})
+- dealer and lot:
+	- d.cars.find({$and:[db.cars.find({dealer: {$elemMatch: "vehicle"}}),db.cars.find({lot: {$elemMatch: {dealer_id: "1"}}})]})
+
+//At this point an Aggregation pipeline is considered, however deemed null and void
+//using various pipelining techniques, we find our answer
+{C}Models
+- id: "1"
+- city: "District of Columbia"
+- model: "Spyder"
+- color: "Red"
+- miles: "001337"
+- year: "2012"
+- models: [id, make, model, city, state]
+	//uses a match statement that matches a model/spyder and city/DC paired with an and statement to join them
+	- db.cars.find({models: {$match: {$and: [{model: {$eq: "Spyder"}}, {city: {$eq: "District of Columbia"}}]}}})
+- variation: [model, color, miles, year]
+	//should sort by and display value for color, miles and year
+	- db.cars.find({variation: {$sort: {color: "$color", miles: "$miles", year: "$year"}}})
+-models and variation
+	- db.cars.find({$and: [({models: {$match: {$and: [{model: {$eq: "Spyder"}}, {city: {$eq: "District of Columbia"}}]}}}), ({variation: {$sort: {color: "$color", miles: "$miles", year: "$year"}}})]})
