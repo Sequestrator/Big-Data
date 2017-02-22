@@ -1,0 +1,44 @@
+2/22
+
+Sharding aka partitions
+
+S_0 ... S_n
+
+at any given time, 1 doc lives in 1 shard
+but we can replicate sets for data recovery, but sharding is for scalability
+
+mongo uses distribution based on a shard key
+each doc has a shard key
+each doc has a range of shard keys, i.e shard_low --> shard_high
+
+shard keys that are close in sort order, will tend to be in same shard.
+
+mongo uses range based partition such like googles big data design
+
+{name: "Alex"} if we shard on name, we get:
+
+name_low  Name_high  shard
+jane		joe		 S2
+joe			kyle	 S0
+kyle		matt	 S1
+
+then name_low to name_high is a range or our metadata, which gives location of docs
+in cluster
+
+["jane","joe"] --> S1
+
+Why range based?
+do queries that involve a range. i.e range of users
+
+db.users.find({name: /^jo/})
+only a couple key ranges in data so the only shards we need to contact are S0 and S2.
+many queries go to 1, but this hits 2, which is better than 100
+if we did the 100, that would be called a scatter gather query
+
+db.users.find({name: /^jo/, age: {$gt:30}, likes: "Tennis"})
+still send to S0 and S2, then do the relevant processing
+
+queries on range efficiently and sorting.
+
+Vertical scaling: Bigger machine
+Horizontal scaling: more machines

@@ -1,0 +1,191 @@
+2/22
+
+Primary with multiple secondaries
+
+	Pri
+Sec		Sec
+
+now we have a cluster. Each server communicates with the other, i.e three-way-handshake
+these are called heartbeats (fire and forget protocol)
+by default, all traffic goes to the Pri. (Read and Write protocol)
+
+any time it needs to make a change, it sends a replication down the line
+
+	    Pri
+(rep)  (hb)   (rep)
+Sec	 ->  (hb) ->  Sec
+
+"eventual consistency"
+
+when create a cluster, you do not specify which will be pri or sec. 
+There is an election process to determine the primary server.
+
+normally we type 
+mongo thomas.butler.edu:25017
+when we create cluster, we type
+mongo clusterName thomas.butler.edu:25017
+and then we can start chaining on machines
+mongo clusterName thomas.butler.edu:25017, hostname:port, hostname:port
+
+if specified hostnames:port failed as primary, it will restart the entire process,
+and if given multiple machines, then it will attempt to move on it HN1 fails, but will reattempt
+Must be prepared if that reconnect does not work.
+
+Read Preference Mode: (5)
+Primary [Default]
+PrimaryPreferred [Read from pri unless there is a problem]
+Secondary [Pick and sec and read from it]
+SecondaryPrefered [Prefer to read off sec, but if all down, will read off Pri]
+Nearest [Finds how quickly the machines respond, and use the fastest]
+
+Writes ALWAYS goes to the primary, where the read is on secondary, and not see anything.
+Write happens at time 0, Read happens at time 1, Replication happens at time 2, you won't
+see anything at all. Quick times do not mean guaranteed results for clustered NOSQL solns.
+
+Local Availability:
+In one physical location
+Two machines
+Reads one primary
+
+All R/W goes to 1 machine, the second machine takes all replication from primary, and the only
+time the second machine gets activated is if the primary goes down.
+
+Local Scalability:
+In one physical location
+Two machines
+Reads are secondary/nearest
+
+Read demand on app, which means 1 server cannot respond fast enough. i.e in risk of losing traffic
+Primary handles all the writes, and the secondary handles all the reads. Can make a choice based
+on Read-Read basis to determine which R/W call goes to which server.
+
+Real World Example:
+Hosted all of the data at one location.
+Power line was run from a different company to have a secondary power, in case primary goes down
+Power goes into one room that are basically Wheels
+wheels would connect to a motor.
+if power cuts off, a motor that runs off secondary power, they have 90 min of power before gen could start
+3 seperate and duplicated networks from 3 isps.
+all networks went to 1 spot.
+guy managed to cut all 3 networks.
+
+Indy			Cleveland		Paris
+R1 - R2			RX				RZ
+S -- S -->INT<-- S
+
+r1 pri
+r2 sec
+rx was a little behind but pretty close.
+when Indy failed, they moved entirely to cleveland
+
+lets say we have a client connecting to INT, that cli has access to any machine.
+if we say nearest for a read, we pick a secondary that responds fastest.
+each server is a node in the cluster.
+Reads can be localized and fast.
+Writes must still go to primary so they get replicated out.
+
+We can give each server a tag <indy>, <cleve>, <paris>
+
+Read Preference: seconday
+Optional Tag: <indy>
+*could by change give paris*
+Read Preference: nearest
+Optional Tag: <indy>
+*more than likely pull from indy*
+
+Write concern:
+0
+n, where n is an int > 0, < # of servers in cluster
+majority
+
+:1 Primary gets it
+:0 when primary gets confirmation of data it moves on
+:n exact number of servers that have the write verified
+:m as long as majority has it, it will return
+
+
+Scenario:
+Write goes to primary
+Client Returns
+Client OK
+Replication is way behind
+Write is in cluster once and on primary
+but not on either secondary causing loss
+n times help with n times of replication
+
+could write with write concern of 6, and have 5 clusters, then timeout
+Mike traditionally uses 0 or 1 write concern. (why*think)
+
+election:
+timestamp during election, the one with best timestamp is more likely to become primary
+Can have numerous machines that are candidates
+All machines vote
+Primary is selected if machines give a majority to that server
+if not enough servers can vote, it auto defaults to READONLY
+
+Primary dies, sec voted in, then sec dies, now 1 voter left, cant create majority,
+so the 1 voter left becomes read only, until the heartbeats are sending and receiving again.
+
+Limitations:
+50 servers in a cluster
+7 voters (only voting server can be a primary)
+First Problem: Servers [A,B,C,D]
+A,B vote A
+C,D vote C
+2<3 for majority --> READONLY
+
+We can choose to make a server a non-voting member. D is NV
+A,B,C votes, now we need majority of 2
+
+Lets say we add another node Servers [A,B,C,D,E]
+E --> Arbiter
+E can be smallest machine we need,
+BUT 
+all it does is break ties (VERY IMPORTANT)
+A,B vote A
+C,D vote C
+no arbiter = hell breaks loose
+
+Say A,B are in indy
+Say C,D are in SanFran
+if SF goes down and B is primary, nothing happens because indy has primary
+if INDY goes down and B is primary, 1 from SanFran calls election.
+C calls for an election, so if 2 were sufficient to create primary, we dont want them to elect
+THEN
+
+We have B as a primary when indy goes back up 
+AND
+We have C as a primary
+AND
+We have 2 primaries so fail.
+
+Say we have an arbiter in SanFran
+
+A,B see loss of C,D
+We know we need 3 votes
+In local they get 2 votes, so switch to Read only
+-- add arbiter --
+have an election and it works
+cluster stays Read/Write
+SanFran will become new primary
+
+Question:
+If we have 4 machines, what is your best split
+if you split 2-2 then it becomes Read Only
+sp we split into 3 areas
+
+Indy, SF, NY
+IN - 1
+SF - 2
+NY - arbiter
+we can lose anything and be fine, but for extra protection,
+add an arbiter to SF so SF has 3.
+That way we have a double backup of all information regardless of what server goes down.
+
+Single Node Server backup resets are the failsafe of all failsafes
+
+
+
+
+
+
