@@ -1,0 +1,102 @@
+2/27
+
+	Pri
+Sec		Sec
+
+Shard Key: Single field in the document
+	- Once picked you can't change it. 
+	- Basically Copy and paste wrong shard into new shard collection.
+	- Every document must have a value for the shard key.
+	- Must be unique, indexed, and must be first field in some 
+
+Chunks (64mb):
+Key - LastName
+[ |  | | | | | | | | | ]
+a-bb-c...............x-z
+Chunking by ranges of values.
+
+balancing service - s1, s2, s3
+3 servers with mongo, sharded collection with 1k shards, now will equally balance along the shards.
+
+say we add 1k docs with lastName "george".
+What that means is all docs try and fit in that chunk.
+said chunk may end up becoming 4, so the balancing service
+will try and figure out where those go.
+As we add, the service must try its best to keep things balanced, while also deleting.
+
+balancing window - time of day
+as new chunks are created, it tries to keep it balanced. if shards are unbalanced,
+balancer will attempt to move data between shards.
+(if biggestShard is roughly 10% of the number of shards)
+	- attempt to move chunks from bigS to littleS, but any writes
+	will continues be logged on bigShard.
+	- Then bigShard looks for changes and then continues to send.
+	- Shard will quit writes and allow the others to pick it up. (TTYL)
+
+Performance is best if shards have equal size and load.
+
+2 types of shard keys.
+- Hashed: Takes val and hashes it (assigns its own unique id) ((good random)) (((No Localization)))
+	- guarantees that all queries hit all servers, unless looking for specific val
+	- best physical balancing
+- Ranged: Use the real values and keeps similar values together.
+	- Ranged can be answered more effectively if we eliminate shards without data
+	- But can equally become unbalanced if info isnt balanced properly anyway
+
+::Criteria::
+Cardinality - How many unique values (limit amount of chunks)
+Frequency - How many values actually occur
+Rate of Change - If KeyVal changes, so do chunks, and basically everything else.
+
+Monotonicly increasing - 1 always greater than rest. 1,2,3 - a,b,c - etc
+
+Key int = identity;
+s1 - 
+	[c1, c2, c3 .... c1000]
+		C1 - [A .. G][H .. Z]
+s2 - 
+	[c1001, c1002, c1003..... c2000]
+s3 - 
+	[c2001, c2002, c2003..... c3000]
+s4 - 
+	[c3001, c3002, c3003..... c4000]
+	
+So how do we actually deploy this shiz.
+
+In mongo...
+
+Physical application is mongod
+client is mongo
+sharding is mongos
+
+its all about replication. Replcation by multi site sharded systems.
+
+Hotel Reservations WorldWide
+- Multi Site so it doesnt go down
+- Euro data in Euro
+- US data in US, etc.
+- High transaction volume
+
+SanFran			NY			Paris
+
+S1 = [Pri				Sec			Sec] Zone = (US) 
+S2 = [Sec				Sec			Pri] Zone = (EU)
+
+Now we have 5 voting notes per shard. Still Odd
+
+S1 = [Pri{Sec}(Arb)		Sec			Sec] Zone = (US) 
+S2 = [Sec				Sec			Pri{Sec}(Arb)] Zone = (EU)
+
+Break this into areas. if we go by country, we have a zone per country
+within shard key range, balancer breaks into chunk, and we take bigger section 
+and bind to a zone, then bind those zones to a shard.
+
+ToDo:
+Posting a scenario, return how we deploy. Basically everything we've done today.
+Denormalize project. Email mike
+
+
+
+
+
+	
