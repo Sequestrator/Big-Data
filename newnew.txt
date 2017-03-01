@@ -1,0 +1,1 @@
+sudo ./mongo --host rs01/mongo1.indyburroughs.net

@@ -1,4 +1,7 @@
 ssh asteel@thomas
 login
 
-./mongo thomas.butler.edu:27017/cs473
+sudo ./mongo thomas.butler.edu:27017/cs473
+sudo ./mongo --host rs01/mongo1.indyburroughs.net
+
+db.people.insert( { name: "aK^47", gender: "male", age: "23" } )
