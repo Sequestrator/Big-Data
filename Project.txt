@@ -40,3 +40,46 @@ travelers, by the top n% travelers. For the later two, what is the percentage of
 //complexity of queries --> nosql
 
 Start with queries, build documents that you need, then go to schema for info.
+
+Raw:
+
+Given:
+Airline(code,name)
+Airport(code,city,state)
+Plane(code,seats)
+Flight(number,airline,origin_airport,destination_airport,plane,distance,departure_time,arrival_time,time)
+Traveller(id)
+Reservation(id,flight,traveller,seat)
+
+Start by Denormalizing:
+[T]Airline
+[T]Airport
+[T]Plane
+[T]Flight
+[T]Traveller
+[T]Reservation
+
+Relationships:
+Q1: flights --> city
+flights --> date
+Q2: reservation --> seat
+flights --> destination_airport
+airport --> city
+flights --> date
+Q3H:airport --> city
+plane --> seats
+reservation --> seats
+flights --> date
+Q4L:airport --> city
+plane --> seats
+reservation --> seats
+flights --> date
+Q5: flights --> city
+reservation --> seats
+plane --> seats
+Q6: flights --> airline
+flights --> date
+flights --> distance
+Q7: flights --> distance
+flights --> number
+reservation --> flight
