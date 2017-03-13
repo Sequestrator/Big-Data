@@ -1,0 +1,28 @@
+No class 3/20
+Now that we know how to design a db, lets make one
+
+Morphia @ mongodb
+1 class per collection
+
+Sample Morphia Doc
+
+@Entity("employees")
+@Indexes
+(
+    @Index(value = "salary", fields = @Field("salary"))
+)
+class Employee 
+{
+    @Id
+    private ObjectId id;
+    private String name;
+    
+    @Reference
+    private Employee manager;
+    
+    @Reference
+    private List<Employee> directReports;
+    
+    @Property("wage")
+    private Double salary;
+}
