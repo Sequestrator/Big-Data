@@ -26,3 +26,15 @@ class Employee
     @Property("wage")
     private Double salary;
 }
+
+Must create mapping classes that correlate Java code to DB code
+
+App:
+Loads 10 dox
+Queries Them
+Prints Results
+
+Mapping Classes:
+
+Mongo Server:
+Migrate to a cluster with shards (one of the first)
