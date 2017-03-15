@@ -1,0 +1,9 @@
+HashMap<acctid,acct>
+for each lead{
+	if(acctid != null){
+		find acc
+		merge lead and acc
+		output
+	}
+
+}
