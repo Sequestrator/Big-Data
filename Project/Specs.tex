@@ -1,0 +1,79 @@
+ToDo:
+machine locations
+machine number
+machine role
+
+optimize queries
+
+DB link error --> account for any issues
+
+IF SF goes down, what do we do
+
+SF: Write:#75 Read: #5
+TO: Write: #8.3 Read: #5
+
+LN: Write: #8.3 Read: #45
+IN: Write: #8.3 Read: #45
+
+# = percent
+
+Machines can be hosted at any of the locations where there is an office now. 
+They are willing to add an additional hosting location in anther location if it makes sense. 
+Your design needs to discuss:
+- where are machines located and how many are they and what role do they play.
+
+- how do applications need to be written/configured to guarantee that the reports 
+are generated from data located in the same place as the person requesting the report.
+
+- if there is a network failure connecting London or Tokyo, 
+how do they continuing being able to do reports and what are the implications.
+
+- if there is network failure that isolates San Francisco, 
+what happens to the ability to update date and run reports?
+
+- what happens if one node fails someplace in the environment? 
+How many nodes can fail before the whole system becomes non-functional?
+
+Design:
+
+So basically we have 4 areas. SanFran, Tokyo, London, and Indy
+
+SF | TO | LN | IN
+SF - 3 (pri)
+TO - arbiter
+LN - 2 || 3 (sec)
+IN - 2 || 3 (sec)
+
+Currently we are looking at 8 machines.
+3 in SF so that if one goes down we can perform an election and keep it running as best we can
+arb in TO because if we are left with 1 machine, we can still get a majority no matter what
+2 or 3 in LN and IN depending on input. The reason we could try 2 is because they are predominately RO
+but for the sake of safety, we could try 3, still get elections and majority, then could be R/W if need be
+
+Total Machines: 10 depending.
+
+If we configure it in this sense,
+
+Say A,B,C are SF
+Say D,E,F are LN
+Say G,H,I are IN
+Say J is arb in TO
+
+Pri in SF,
+LN,IN,TO down no worries
+
+SF goes down, TO arbites to determine if possible election needed
+LN,IN have 3 availble, will call for an election, get majority, have an election,
+cluster stays Read/Write, we gucci
+
+Under this design, LN goes down, IN steps up. TO goes down, its an arb, no worries
+
+Under this design, we could have 1 node disappear from each station.
+i.e SF,IN,LN drop down to 2 nodes, with an Arb, we still have Odd, so elections could be made
+and we could still be in business. should 2 nodes fail in each,
+each SF,IN,LN drop to 1 with 1 arb, if SF remains running as Pri with 1 node we still have R/W
+and if anything drops below that, we have 2 nodes with 1 arb, still allowing an election if necessary.
+
+Under this design, we could lose 6 nodes and still be alright, but without an arbiter,
+we could lose 3.
+
