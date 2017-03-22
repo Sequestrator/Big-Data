@@ -1,0 +1,50 @@
+Time Series Data
+
+If we were all together and we id analysis on birthdate, its interesting in time, but not a time series event.
+
+instances of birth from the US in real time that would be Time Series.
+
+Utility data information. Not 1 a month, how much energy are you using instantly at any given meter.
+
+if we measure energy data per minute, how would we timestamp this.
+
+-Power Measurement
+-Timestamp
+
+Interesting Challenge:
+
+1 Document - 
+TimeS: 3:00:00
+TimeE: 3:59:00
+Date: 3/17/17
+Measurements: [0...59]
+
+2 Document - 
+TimeS: 4:00:00
+TimeE: 4:59:00
+Date: 3/17/17
+Measurements: [0...59]
+
+Everytime this happens, we do a write. One of mongos core caps is the in-place update mechanism field-level updates are managed in place
+as long as the size of the doc does not grow significantly.
+
+As long as the doc doesnt move, we dont have to touch the index. In place update is pretty quick
+if we insert every time, every index needs to be updated on every insert.
+
+If we periodically update, then instead of constant updates, we just actually write to it
+when we need it. 
+
+so if we unwind on the 60 Measurements......
+we will now have 60 documents of the form {3:00:00, 3:59:00, 3/17/17, #} 
+
+could $skip && $limit, or do includeArrayIndex: <string>
+
+365 days, 24 docs/day, 1mil ppl.
+Doc_id
+TimeS
+Date
+60 Measurements
+
+Parallel Prog, Avg of Avg. Create n multiple shards per value of n. 4 procs, 4 shards.
+
+map reduce.
