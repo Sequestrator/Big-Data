@@ -1,0 +1,49 @@
+My deployment design based on the specified requirements would make use of 3 data centers one in America, London and Tokyo.
+
+The database would take advantage of 2 of the tools that mongo offers. Zone sharding and replica sets.
+
+Using zone sharding, data will be partitioned beased on user location, each shard being localized specifically to one of the 3 data centers. each of these shards will then be replicated into a replica set stored in all 3 data centers with the primary replica member in the datacenter specific to that region. 
+
+So, the layout of nodes would be as follows:
+
+US DataCenter:
+US shard replica (primary)
+LON shard replica (secondary)
+TO shard replica (secondary)
+
+LON DataCenter:
+LON shard replica (primary)
+US shard replica (secondary)
+TO shard replica (secondary)
+
+TO DataCenter:
+TO shard replica (primary)
+US shard replica (secondary)
+LON shard replica (secondary)
+
+This design offers many benefits:
+
+- Reads can routed to the local data center (local reading) by using the nearest read preference
+- Writes are replicated to each of the data center  (global writing)
+- Each zone shard is independantly scaled, so since most of the writing is done in the US, the shard for US can be scaled appropriately without having the TO and LN scaling.
+
+
+- how do applications need to be written/configured to guarantee that the reports are generated from data located in the same place as the person requesting the report.
+This can be done by specifing the nearest read preference, so a user In London querying data from the US will be pulled from the US replica member in the London shard.
+
+- if there is a network failure connecting London or Tokyo, how do they continuing being able to do reports and what are the implications.
+
+In the event that the London server crashes, the TO and US replica members will become unavailable not having much impact, and the primary replica member for the London shard will become available triggering an election for a new primary member. This would just makw it so that the London office ould have to temporarily connect to a remote server for reads resulting in a greater network latency until the London server is back up and running. The same would apply fot TO
+
+If a network error that isolated SF were to occur there would be similar implications to the previous example. The replica member in either LN or TO would be elected to primary of the us replica set and a remeote connection would have to be established to the server containing the member that wins the election and then it would be possible to make writes as before with a greater network latency until the network error was fixed.
+
+If a single node fails in the environment, elections take place and from there, a remote network connection would need to be established in order to maintain proper database connection. This would just increase network latency and traffic until the problem is fixed.
+
+Without an arbiter for each replica set, the system would continue to work until 2 members of a given replica set fail because another eleciton couldn't take place. So that means that a total of 3 nodes could fail before the system fails. However, if arbiters were created in each datacenter with secondary members for each of the zone shard 
+(6 arbiters) 6 nodes could fail without crashing the system.
+
+ 
+
+Domenic O'Neill
+Butler University, Class of 2018
+Computer Science Major
