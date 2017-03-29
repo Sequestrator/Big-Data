@@ -1,0 +1,48 @@
+Next Week will be sharding and The Queries.
+2 weeks from Mar 29 project is due
+Final week, Map reduce will not be on the exam.
+
+provide a datastore stores the information.
+pass it a query that corresponds to the collections.
+would pass a (reservation.class) Pushes a 1-1 collection.
+
+query.filter("price").greaterThanOrEq(1000);
+
+datastore.createQuery(UserLocation.class)
+.field("x").lessthan(5)
+.field("y").greaterThan(6)
+
+strings are compared by the native sequence
+
+ContainsRenamedFields found = getDs()
+.offset(1)
+.limit(10)
+.aslist()
+
+Building a simple Query
+
+Dox:
+Airline
+{
+	_id: 1,
+	airlineCode: SWA,
+	name: Southwest
+}
+Query<Airline> QueryAirline = datastore.createQuery(Airline.class);
+List<Airline> AirlineList = QueryAirline.asList();
+List<Airline> AirlineList = QueryAirline.filter("airlineCode = ", "SWA").asList();
+List<Airline> AirlineList = QueryAirline.field("code").equals("SWA").asList();
+
+https://www.playframework.com/modules/morphia-1.2.4c/query
+i = QueryAirline.filter(...).fetch()
+while(i.hasNext())
+{
+	Airline a = i.next();
+}
+#http://mongodb.github.io/morphia/1.0/javadoc/
+
+Query<Airline> q = datastore.createQuery(Airline.class).filter("flightCode = ", 1).asList();
+datastore.createAggregation(Airline.class)
+	.match(q)
+	.project(p)
+	.lookup("inventory", "item", "sku", "inventoryDocs")
