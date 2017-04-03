@@ -1,0 +1,52 @@
+In 2010, the us Census said there were about 300,000,000 us citizens.
+	- US airline embarcations was about 600,000,000
+		600,000,000/365 = 1,600,000
+			1,600,000/8084 = 33,000 tickets per hour
+				33,000/60 = 555 tickets per minute
+					555/60 = 10 tickets a second
+					
+					Mike/Wife/Daughter did 13 searches to purchase 1 round trip ticket.
+					~130 search transactions per second.
+				~100,000 flights per day.
+--------	--------	--------					
+Server1A	Server1B	Server1C	-	{Replications Set 1} - [Shard 1]
+--------	--------	--------
+
+--------	--------	--------
+Server2A	Server2B	Server2C	-	{Replication Set 2} - [Shard 2]
+--------	--------	--------
+
+-------------------
+MongoS		MongoS |		
+				   |
+Config1|Config2	   |
+mongod | mongod    |
+  replicaset	   |
+--------------------
+
+Each one of these shards is made up of chunks. And it attempts to relocate chunks as it sees necessary.
+Each one of the shards means an instance of mongod, i.e a physical machine.
+Since each one is a replication set, it is possible that they are in multiple locations.
+provide the address of one of the mongod serves, that server will respond to the client, showing that we are
+rep sets for these other servers. It is how we maintain connectivity, even if we lose one of the servers.
+
+We hae an additional replicationset. Holds information regarding the sharding. Keys and ranges that all map to the seperate
+chunks. That is the job of mongos, not mongod.
+
+Collection:
+People:
+Shard Keys: SS# - Ranges to different chunks.
+
+Primary, PrimaryPreferred, Secondary, SecondaryPreferred, Nearest
+
+
+Lets start an aggregation with a 
+$match, and the $lookup
+
+$match = find
+say we $lookup by school
+
+id = 1
+people.state = univ.state ==> univ.state = IN
+
+2 weeks from apr 3 --> final exam
