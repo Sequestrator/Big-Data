@@ -1,0 +1,26 @@
+4/10 Notes
+
+Run an own server for creating clusters. Got 3 servers and created replication sets
+To run a cluster, it generally requires 9 machines. There will be 1 replication set that contains ADMIN.config
+That requires its own Replication set, + odd number of servers. 3 servers Run the config, each shard has 3 servers.
+
+MongoAtlas - Hosted mongo clusters. Runs on amazon.
+
+Running a cluster with 2 shards. Each shard has a Primary and 2 Secondaries. With Atlas, we dont get GeoDistribution.
+
+To connect, there are a bunch of different ways. Our way is very Secure. Must provide an IP address to connect.
+Currently it is broadcast to the entire network.
+
+Admin.config
+User: cs473
+Pass: ButlerDawgz
+Host: cs473-shard-00-00-7choh.mongodb.net
+Port: 37017
+
+S4 S5 S6 - RS2
+S7 S8 S9 - RS1 (mongoD and mongoS)
+
+S1 S2 S3 - configdb
+mongod = port 27017
+mongos = port 37017
+If we shard by zip code, shards will distribute evenly, and when connect to S4, then only will see the Zips to that shard.
