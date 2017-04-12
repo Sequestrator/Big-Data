@@ -1,0 +1,50 @@
+Mapping between collections and Mongodb
+
+Lets say we have 2 collections
+{C}People
+	-id
+	-name
+	-age
+	-(employeerID) or ***@Embedded (id, name)*** (References everything)
+	{
+		-addressOne
+		-city
+		-state
+	}
+{C}Employeer
+	-id
+	-name
+
+In people we want to reference employeer
+
+Now in Java
+
+People.class
+{
+	String id
+	String name
+	String age
+	String employeeriD (Just the ID)
+	Employeer employeer (@Embedded Document)
+	***Location location*** (Only Referenced Once, Reliant on Query)
+}
+
+Location.class
+{
+	addressOne
+	city
+	state
+}
+
+sh.enableSharding("Database")
+mongos sh.shardCollection("database.airline, {id: "hashed"})
+
+if we shard an 1000000 document collection, it will not be balanced as it moves stuff from system to system
+
+What to do on monday. Review what the data model is and do the queries.
+
+What to prepare for.
+
+We need to tell mike how to shard the database.
+
+Shard this collection, on any field, and I want it ranged/hashed
