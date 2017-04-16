@@ -7,8 +7,8 @@
 Das A, B C's:
 Public || Private Key Encryption
 a is for airports, 
-b is is for bums, 
-c is for cool kids who wanna have fun, 
+b is is for bookinks, 
+c is for cool kids; who wanna have fun, 
 d is for dingos, 
 and f is for flights. 
 For those of uS who wanna FLy Alone, 
