@@ -47,27 +47,7 @@ mkdir -p /mongodb/data/db
 sudo ./mongod (server)
 sudo ./mongo (client) (in new terminal)
 
-> Find Previous Repository Here: https://github.com/chrismcdonald0111/volunteer-service
-
-> Install Node.js
-
-> Install Packages: sudo npm install
-
-> Install bower: sudo npm install -g bower
-
-> Grunt install: npm install -g grunt-cli
-
-> Launch localhost@8000: grunt serve
-
-> *** Back End ***
-
-> Enter nodejs/com.ronaldmcdonaldhouse/ directory and run: sudo npm install
-
-> Enter Server Directory and run:
-    - node www (For Standard Web Server)
-    - DEBUG=express:* node www.js (For Debug Web Server)
-
-Server should be running on port 3000
+Server should be running on port localhost:8000
 
 *NOTE*
 
