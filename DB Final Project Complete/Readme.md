@@ -3,6 +3,18 @@
 
 ![Bombarding](http://assets1.ignimgs.com/2013/08/01/black-ops-2-review-01jpg-e9345a_1280w.jpg)
 
+```
+Das A, B C's:
+Public || Private Key Encryption
+a is for airports, 
+b is is for bums, 
+c is for cool kids who wanna have fun, 
+d is for dingos, 
+and f is for flights. 
+For those of uS who wanna FLy Alone, 
+We BooK oUr oWn Flightz
+```
+
 Clone or download repository: https://github.com/Bombarding/Big-Data.git
 
 
